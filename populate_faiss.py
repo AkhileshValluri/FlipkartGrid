@@ -63,30 +63,15 @@ class FaissDB():
             closest_prods.append(nearest_prod_desc) 
         return closest_prods
     
-fdb = FaissDB()
-# fdb.populate_faiss()
+def copy_images_to_matches(prod_desc):
+    for prod in prod_desc : 
+        id = prod.split('\n')[0].split(' : ')[-1]
+        import shutil
 
-prod_desc = fdb.get_k_similar(k = 3, text = """
-id : 19094
-gender : Women
-masterCategory : Footwear
-subCategory : Footwear
-articleType : Shoes
-baseColour : Blue
-season : Summer
-year : 2011.0
-usage : Ethnic
-productDisplayName :            
-""")
+        source_path = f'./images/{id}.jpg'
+        destination_path = f'./matches/{id}.jpg'
 
-for prod in prod_desc : 
-    id = prod.split('\n')[0].split(' : ')[-1]
-    import shutil
-
-    source_path = f'./images/{id}.jpg'
-    destination_path = f'./matches/{id}.jpg'
-
-    # Copy the file
-    shutil.copy(source_path, destination_path)
+        # Copy the file
+        shutil.copy(source_path, destination_path)
 
 
