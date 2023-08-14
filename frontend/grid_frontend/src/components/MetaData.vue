@@ -1,8 +1,8 @@
 <template>
     <div class="main-box">
         <div class="info-box">
-            <div class = "metadata-box">This is Metadata box</div>
-            <div class ="chat-box">
+            <div class = "metadata-box"><UserForm/></div>
+            <div class ="chat-box" ref="scrollableDiv">
                 <div v-for="prompt in conversation_history" :key="prompt" class="conversation">
                     <div v-if="prompt.role === 'user'" class="checkbox-user">
                         <div class="user-chat">{{ prompt.content }}</div>
@@ -14,7 +14,11 @@
             </div>
         </div>
         <div class = "product-box">
-            <div class="history"></div>
+            <div class="history">
+                <div class="allProducts">
+                    <ProductCard v-for="product in products" :key="product"/>
+                </div>
+            </div>
             <div class="text-box">
                 <div><textarea placeholder="Start the conversation here!!!" class="chatbox-input" v-model = "prompt"/></div>
                 <div><button type="submit" @click="sendPrompt">Submit</button></div>
@@ -24,25 +28,56 @@
 </template>
 
 <script>
+import ProductCard from './ProductCard.vue'
+//import ProductCard from './ProductCard.vue'
+    import UserForm from './UserForm.vue'
     export default{
         name : 'MetaData',
+        components:{
+    UserForm,
+    ProductCard,
+    //ProductCard
+},
         data(){
             return{
                 prompt: '',
-                conversation_history: []
+                count:0,
+                conversation_history: [],
+                products:[]
             }
         },
         methods : {
             sendPrompt(){
                 // TODO Send prompt data to backend
-                console.log(this.prompt)
-                this.conversation_history.push({'role':'gpt', 'content':this.prompt})
-            }
+                    console.log(this.prompt)
+                    this.products.push(this.count);
+                    this.count++;
+                    this.conversation_history.push({'role':'user', 'content':this.prompt})
+                    this.$nextTick(() => {
+                        this.scrollToEnd();
+                    });
+                },
+                scrollToEnd() {
+                    const scrollableDiv = this.$refs.scrollableDiv;
+                    scrollableDiv.scrollTop = scrollableDiv.scrollHeight;
+                }
+            },
         }
-    }
 </script>
 
 <style>
+    .allProducts{
+        display: flex;
+        flex-wrap: wrap;
+        gap:10px;
+        justify-items: center;
+        justify-content: space-evenly;
+        width: 100%;
+        height: 100%;
+        overflow-y:auto;
+        overflow-x: hidden;
+    }
+
     .main-box{
         width:95rem;
         height:46rem;
@@ -131,9 +166,7 @@
         font-size: 16px;
         box-sizing: border-box;
         resize: horizontal;
-        box-sizing: border-box;
         font-family:  'Roboto', sans-serif;
-        resize: none;
     }
 
     button{
