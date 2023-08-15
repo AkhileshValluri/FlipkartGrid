@@ -1,0 +1,6 @@
+gender: Men
+ masterCategory: Footwear
+ subCategory: Shoes
+ articleType: Shoes
+ baseColour: Black
+ brand: Puma
