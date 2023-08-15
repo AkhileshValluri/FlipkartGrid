@@ -47,36 +47,27 @@ class Chatbot():
             category_string_to_attr[attr] = cat_string
         
         messages = messages[:3] # only last 3 messages
-        for attr in category_string_to_attr.keys(): 
-            print(attr, category_string_to_attr[attr])
+        # for attr in category_string_to_attr.keys(): 
+        #     print(attr, category_string_to_attr[attr])
         rail_spec = f"""
             <rail version = "0.1"> 
                 <output> 
                     <string name = "gender" 
                         description = "Gender or sex of person identified through metadata or prompt"
-                        format = "{category_string_to_attr['gender']}"
-                    />
-                    <string name = "masterCategory" 
-                        format = "{category_string_to_attr['masterCategory']}"
-                    />
-                    <string name = "subCategory" 
-                        format = "{category_string_to_attr['subCategory']}"
+                        format = "{category_string_to_attr['gender']}; multiple-matches"
                     />
                     <string name = "articleType" 
                         description = "Type of clothing article"
-                        format = "{category_string_to_attr['articleType']}"
+                        format = "{category_string_to_attr['articleType']}; multiple-matches"
                     />
                     <string name = "baseColour" 
                         description = "Colour of clothing article"
-                        format = "{category_string_to_attr['baseColour']}"
-                    />
-                    <string name = "brand" 
-                        description = "Brand/Company user wants"
                     />
                 </output>
 
                 <prompt>
                     You are a prompt classifier who should extract information from the metadata of the user or the query itself. 
+                    You can return multiple categories if you feel like they are similar enough.
                     METADATA : 
                     {metadata}
                     USER QUERY: 
@@ -91,7 +82,7 @@ class Chatbot():
     
     def _make_openai_query(self, guard, messages): 
         """Makes the acutal open AI call, returns the vector DB queryable string"""
-        openai.api_key = "your api key here"
+        openai.api_key = "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"
         raw_llm_output, validated_output = guard(
             openai.Completion.create, 
             engine = 'text-davinci-003', 
@@ -104,3 +95,4 @@ class Chatbot():
     def get_chatbot_reply(self, messages): 
         guard = self.get_guardrail_instance(messages = messages)
         return self._make_openai_query(guard, messages)
+
