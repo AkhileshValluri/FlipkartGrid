@@ -3,11 +3,18 @@
         <div class="info-box">
             <div class = "metadata-box"><UserForm/></div>
             <div class ="chat-box" ref="scrollableDiv">
+                <div v-if="conversation_history.length === 0">
+                    <h1 style="color:yellowgreen; text-align: center; padding-top:22% ;">Your conversation with Flipbot will appear here</h1>
+                </div>
                 <div v-for="prompt in conversation_history" :key="prompt" class="conversation">
                     <div v-if="prompt.role === 'user'" class="checkbox-user">
-                        <div class="user-chat">{{ prompt.content }}</div>
+                        <p>YOU</p>
+                        <div class="user-chat">
+                            {{ prompt.content }}
+                        </div>
                     </div>
                     <div v-else class="checkbox-gpt">
+                        <p>FLIPBOT</p>
                         <div class="gpt-chat">{{ prompt.content }}</div>
                     </div>
                 </div>
@@ -15,6 +22,15 @@
         </div>
         <div class = "product-box">
             <div class="history">
+                <div v-if="products.length === 0" class="if-zero">
+                    <h1 style="color: yellowgreen; text-align: center;">Welcome to Flipbot !!!</h1>
+                    <h1 style="color: yellowgreen; text-align: center;">
+                        There are no products to display, start chatting with the flipbot in the textbox below to display products that you like !!!
+                        <br/><br/>Before you start, please enter all your details in the left so that we can give you an accurate fashion outfit.
+                        <br/><br/>You can also give us an image so that we can find out outfits that are similar to it.
+                        <br/><br/>Happy Shopping !!!
+                    </h1>
+                </div>
                 <div class="allProducts">
                     <ProductCard v-for="product in products" :key="product"/>
                 </div>
@@ -29,14 +45,13 @@
 
 <script>
 import ProductCard from './ProductCard.vue'
-//import ProductCard from './ProductCard.vue'
     import UserForm from './UserForm.vue'
     export default{
         name : 'MetaData',
+        submit:'Submit',
         components:{
     UserForm,
     ProductCard,
-    //ProductCard
 },
         data(){
             return{
@@ -50,8 +65,8 @@ import ProductCard from './ProductCard.vue'
             sendPrompt(){
                 // TODO Send prompt data to backend
                     console.log(this.prompt)
-                    this.products.push(this.count);
-                    this.count++;
+                    // this.products.push(this.count);
+                    // this.count++;
                     this.conversation_history.push({'role':'user', 'content':this.prompt})
                     this.$nextTick(() => {
                         this.scrollToEnd();
@@ -66,6 +81,7 @@ import ProductCard from './ProductCard.vue'
 </script>
 
 <style>
+
     .allProducts{
         display: flex;
         flex-wrap: wrap;
@@ -76,6 +92,22 @@ import ProductCard from './ProductCard.vue'
         height: 100%;
         overflow-y:auto;
         overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: #e0e0e0 #f0f0f0;
+    }
+
+    .allProducts::-webkit-scrollbar{
+        width: 6px;
+        background-color: grey;
+    }
+
+    .allProducts::-webkit-scrollbar-thumb {
+        background-color: white;
+        border-radius: 3px;
+    }
+
+    .allProducts::-webkit-scrollbar-thumb:hover {
+        background-color: white;
     }
 
     .main-box{
@@ -109,7 +141,6 @@ import ProductCard from './ProductCard.vue'
         color: white;
         display: flex;
         flex-direction: column;
-
     }
 
     .conversation{
@@ -150,12 +181,27 @@ import ProductCard from './ProductCard.vue'
         height: 48vh;
         overflow-y:auto;
         overflow-x: hidden;
+        scrollbar-width: thin;
+        scrollbar-color: #e0e0e0 #f0f0f0;
+    }
+
+    .chat-box::-webkit-scrollbar{
+        width: 6px;
+        background-color: grey;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb {
+        background-color: white;
+        border-radius: 3px;
+    }
+
+    .chat-box::-webkit-scrollbar-thumb:hover {
+        background-color: white;
     }
 
     .metadata-box{
         width: 100%;
         height: 50%;
-        border: 1px solid silver;
     }
 
     .chatbox-input{
@@ -187,5 +233,6 @@ import ProductCard from './ProductCard.vue'
         width: 95%;
         height: 95%;
         margin: 2.5% 2.5% 2.5% 2.5%;
+        overflow-y: hidden;
     }
 </style>
