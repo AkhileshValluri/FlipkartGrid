@@ -14,27 +14,23 @@ class ImageFaiss():
         self.embedding_dim = 768  # Reduce the embedding dimension for small data
         self.index = faiss.IndexFlatL2(self.embedding_dim)
 
-    def _get_text_preprocessing(self, input_text : str, weights : dict) : 
+    def _get_text_preprocessing(self, response : dict, weights : dict) : 
         """
         preprocessing text to remove unnecessary words from product description 
         kwargs define weights for different categories 
         """
         #each element corresponds to different category
-        input_text = input_text.strip().split('\n') 
         input_string = ""
-        for label in input_text: 
-            label_name, label_value = label.strip().split(' : ')
-            #to force importance of certain words
-            if label_name.lower() in weights.keys() : 
-                weight = weights[label_name]
-            else: 
-                weight = 1
-            label_value += ' '
-            input_string += (label_value * weight) + ' ' 
-        
-        input_string = input_string.replace('  ', ' ')
-        input_string = input_string.replace('  ', ' ')
-        return input_string 
+        for key in response.keys(): 
+            weight = weights[key] if key in weights.keys() else 1
+            for _ in range(weight):
+                if isinstance(response[key], list): 
+                    for val in response[key]: 
+                        input_string += val + ' ' 
+                else:
+                    input_string += str(response[key]) + ' '
+        print(input_string)
+        return input_string
 
     #func to be called on each product string
     def get_text_embedding(self, \
@@ -45,13 +41,14 @@ class ImageFaiss():
             'masterCategory' : 1, 
             'subCategory' : 2, 
             'articleType' : 4, 
-            'baseColour' : 2, 
+            'baseColour' : 4, 
             'season' : 1, 
             'year' : 0, 
             'brand' : 2
         }): 
 
-        input_text = self._get_text_preprocessing(input_text, weights) 
+        if isinstance(input_text, dict):
+            input_text = self._get_text_preprocessing(input_text, weights) 
         
         inputs = self.tokenizer(input_text, return_tensors='pt', padding=True, truncation=True) 
         with torch.no_grad(): 
@@ -85,9 +82,9 @@ class ImageFaiss():
         index = faiss.read_index(index_path)               
         return index
     
-    def get_k_similar(self, k : int, text : str, threshhold : float = 0.5) -> List[str]:
+    def get_k_similar(self, k : int, text, threshhold : float = 0.5) -> List[str]:
         """k -> number of similar to consider 
-        text -> query for which to find similar 
+        text -> query for which to find similar might be dict (llm parsed) or str
         threshhold -> cosine similarity threshhold"""
         text_embedding = self.get_text_embedding(text) 
         text_embedding = normalize(text_embedding, norm = 'l2', axis=1)

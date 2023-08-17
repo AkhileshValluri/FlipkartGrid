@@ -2,18 +2,13 @@ from trendy_faiss import TrendyFaiss
 from chatbot import Chatbot 
 import json
 
-def pipeline(request): 
+def pipeline(request : dict): 
     metadata = request['metadata']
     messages = request['messages']
 
-    metadata_string = json.dumps(metadata)
-
     cb = Chatbot()
-    llm_parsed_query = json.dumps(cb.get_chatbot_reply(messages))
-    llm_parsed_query = llm_parsed_query.replace('"', '')
-    llm_parsed_query = llm_parsed_query.replace(',', '\n')
-    llm_parsed_query = llm_parsed_query[1:]
-    llm_parsed_query = llm_parsed_query[:len(llm_parsed_query) - 1] 
+    # llm_parsed_query = cb.get_chatbot_reply(messages)
+    llm_parsed_query = {'gender': 'Men', 'articleType': ['Casual Shoes', 'Formal Shoes', 'Sports Sandals'], 'baseColour': 'Black'}
     print(llm_parsed_query)
     
     k = metadata['k']
@@ -22,13 +17,19 @@ def pipeline(request):
 
     tf = TrendyFaiss() 
     tf.populate_faiss(llm_parsed_usr_query=llm_parsed_query)
-    tf.copy_trendy_photos(k, llm_parsed_query + metadata_string, query_threshhold=query_threshhold, product_threshhold=query_threshhold)
+    
+    combined_dict = llm_parsed_query
+    combined_dict.update(req['metadata'])
+
+    tf.copy_trendy_photos(k, combined_dict, query_threshhold=query_threshhold, product_threshhold=query_threshhold)
 
 
 req = {
     'metadata' : {
         'k' : 5, 
-        'similarity' : 0.7
+        'similarity' : 0.7, 
+        'location' : 'hyderabad', 
+        'age' : 100
     }, 
     'messages' : [
         {
@@ -39,3 +40,35 @@ req = {
 }
 
 pipeline(req)
+
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
+from typing import List
+
+app = FastAPI()
+
+class Message(BaseModel):
+    role: str
+    content: str
+
+class RequestPayload(BaseModel):
+    metadata: dict
+    messages: List[Message]
+
+class ResponsePayload(BaseModel):
+    result: str
+
+@app.post("/process")
+def process_request(payload: RequestPayload):
+    try:
+        metadata = payload.metadata
+        messages = payload.messages
+
+        # Your processing logic here
+
+        result = "Processed successfully"
+        
+        response_payload = ResponsePayload(result=result)
+        return response_payload
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

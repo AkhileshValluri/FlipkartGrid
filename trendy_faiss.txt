@@ -1,6 +1,1 @@
-gender: Men
- masterCategory: Footwear
- subCategory: Shoes
- articleType: Shoes
- baseColour: Black
- brand: Puma
+Casual Shoes Formal Shoes Sports Sandals Casual Shoes Formal Shoes Sports Sandals Casual Shoes Formal Shoes Sports Sandals Black 

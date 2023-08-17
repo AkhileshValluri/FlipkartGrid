@@ -82,7 +82,7 @@ class Chatbot():
     
     def _make_openai_query(self, guard, messages): 
         """Makes the acutal open AI call, returns the vector DB queryable string"""
-        openai.api_key = ""
+        openai.api_key = "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"
         raw_llm_output, validated_output = guard(
             openai.Completion.create, 
             engine = 'text-davinci-003', 
