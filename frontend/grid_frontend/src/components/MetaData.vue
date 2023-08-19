@@ -87,10 +87,10 @@ export default {
     },
 
     async sendPrompt() {
-
+      this.products = [];
       //update conv history 
       this.conversation_history.push({ "role": "user", "content": this.prompt });
-
+      this.prompt = "";
       //object as per API docs
       let data = {
         'metadata': {
@@ -169,8 +169,8 @@ export default {
 }
 
 .main-box {
-  width: 95rem;
-  height: 46rem;
+  width: 100%;
+  height: 96vh;
   display: flex;
 }
 
@@ -236,7 +236,7 @@ export default {
 
 .chat-box {
   width: 100%;
-  height: 48vh;
+  height: 50%;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: thin;
@@ -259,7 +259,7 @@ export default {
 
 .metadata-box {
   width: 100%;
-  height: 50%;
+  height: 60%;
 }
 
 .chatbox-input {

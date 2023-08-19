@@ -24,8 +24,14 @@
         },
         methods: {
             likeSubmit(){
-                this.isLiked = true;
-                this.like = 'Liked'
+                if(!this.isLiked){
+                    this.isLiked = true;
+                    this.like = 'Liked';
+                }
+                else{
+                    this.isLiked = false;
+                    this.like = 'Like'
+                }
                 console.log('Submitted');
             }
         }
@@ -39,7 +45,7 @@
         border-radius: 10px;
         border: 1px solid silver;
         flex: 0 0 calc(33.33% - 10px);
-        height:33%;
+        height:50%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -61,6 +67,18 @@
     .image{
         width:100%;
         height: 100%;
+        scrollbar-width:thin;
+        scrollbar-color: #e0e0e0 #f0f0f0;
+    }
+
+    .image::-webkit-scrollbar {
+    width: 0px;
+    background-color: grey;
+    }
+
+    .image::-webkit-scrollbar-thumb {
+    background-color: white;
+    border-radius: 0px;
     }
 
     .notLiked{
@@ -70,8 +88,8 @@
         margin-bottom: 5px;
         background-color: #007bff;
         width: 30%;
-        margin-left:auto;
-        margin-right: auto;
+        margin-left:15vh;
+        margin-right: 15vh;
         margin-top: 2%;
         cursor: pointer;
     }
@@ -83,8 +101,8 @@
         margin-bottom: 5px;
         background-color: yellowgreen;
         width: 30%;
-        margin-left:auto;
-        margin-right: auto;
+        margin-left:15vh;
+        margin-right: 15vh;
         margin-top: 2%;
         cursor: pointer;
     }
