@@ -52,6 +52,9 @@ class Chatbot():
         rail_spec = f"""
             <rail version = "0.1"> 
                 <output> 
+                    <string name = "response"
+                        description = "Response to the user Query"
+                    />
                     <string name = "gender" 
                         description = "Gender or sex of person identified through metadata or prompt"
                         format = "{category_string_to_attr['gender']}; multiple-matches"
@@ -68,6 +71,7 @@ class Chatbot():
                 <prompt>
                     You are a prompt classifier who should extract information from the metadata of the user or the query itself. 
                     You can return multiple categories if you feel like they are similar enough.
+                    In the response be friendly and helpful. Make sure to mention to mention to the user what exactly you inferred from their query.
                     METADATA : 
                     {metadata}
                     USER QUERY: 
@@ -82,7 +86,9 @@ class Chatbot():
     
     def _make_openai_query(self, guard, messages): 
         """Makes the acutal open AI call, returns the vector DB queryable string"""
-        openai.api_key = "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"
+        import dotenv
+        dotenv.load_dotenv()
+        openai.api_key = os.environ.get('OPENAI_API_KEY')
         raw_llm_output, validated_output = guard(
             openai.Completion.create, 
             engine = 'text-davinci-003', 

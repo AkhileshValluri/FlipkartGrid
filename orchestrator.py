@@ -7,8 +7,8 @@ def pipeline(request : dict):
     messages = request['messages']
 
     cb = Chatbot()
-    # llm_parsed_query = cb.get_chatbot_reply(messages)
-    llm_parsed_query = {'gender': 'Men', 'articleType': ['Casual Shoes', 'Formal Shoes', 'Sports Sandals'], 'baseColour': 'Black'}
+    llm_parsed_query = cb.get_chatbot_reply(messages)
+    reply = llm_parsed_query['response']
     print(llm_parsed_query)
     
     k = metadata['k']
@@ -39,36 +39,22 @@ req = {
     ]
 }
 
-pipeline(req)
+from flask import Flask, request, jsonify
 
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List
+app = Flask(__name__) 
 
-app = FastAPI()
-
-class Message(BaseModel):
-    role: str
-    content: str
-
-class RequestPayload(BaseModel):
-    metadata: dict
-    messages: List[Message]
-
-class ResponsePayload(BaseModel):
-    result: str
-
-@app.post("/process")
-def process_request(payload: RequestPayload):
-    try:
-        metadata = payload.metadata
-        messages = payload.messages
-
-        # Your processing logic here
-
-        result = "Processed successfully"
+@app.route('/', methods = ['POST'])
+def process_input() : 
+    try: 
+        data = request.json
+        reply = pipeline(data) 
+        return {'message', reply}
         
-        response_payload = ResponsePayload(result=result)
-        return response_payload
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e: 
+        return jsonify(
+            {'status' : 'error', 
+             'message' : str(e)}
+        ), 400 
+
+if __name__ == '__main__' : 
+    app.run(debug = True)

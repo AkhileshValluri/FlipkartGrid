@@ -16,8 +16,8 @@ class TrendyFaiss() :
         self.faissdb = ImageFaiss()
 
         self.weights = {
-            'gender' : 0, 
-            'articleType' : 3, 
+            'gender' : 1, 
+            'articleType' : 4, 
             'baseColour' : 1
         }
 
@@ -63,9 +63,10 @@ class TrendyFaiss() :
     def populate_faiss(self, llm_parsed_usr_query : dict): 
         """Populates trendy query faiss
         llm_parsed_usr_query : object with articleType, baseColour, gender info"""
-        with open('./trendy_faiss.txt', 'w') as file: 
+        with open('./trendy_faiss.txt', 'a') as file: 
             file.write(self._get_text_preprocessing(llm_parsed_usr_query, self.weights)) 
             file.write('\n')
+            print(self._get_text_preprocessing(llm_parsed_usr_query, self.weights))
         
         text_embedding = self.get_text_embedding(llm_parsed_usr_query)
         self.index.add(text_embedding)
@@ -92,16 +93,17 @@ class TrendyFaiss() :
         for dist, idx in zip(distances[0], indices[0]): 
             nearest_qrys = products[idx]
             cosine_similarity = 1 / (1 + dist) 
+            print(cosine_similarity)
             if cosine_similarity >= threshhold: 
                 closest_qrys.append(nearest_qrys)
                 
         closest_qrys = [text] + closest_qrys
         return closest_qrys
     
-    def copy_trendy_photos(self, k : int, text : str, query_threshhold : float = 0.8, product_threshhold : float = 0.2): 
+    def copy_trendy_photos(self, k : int, text : str, query_threshhold : float = 0.9, product_threshhold : float = 0.2): 
         """for all similar trendy queries, get k similar products for each"""
         trendy_queries = self.get_k_similar(k = k, text = text, threshhold = query_threshhold)
 
         for query in trendy_queries: 
             copy_images_to_matches(prod_desc = self.faissdb.get_k_similar(k, query, product_threshhold))
-        
+    
