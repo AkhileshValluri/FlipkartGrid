@@ -19,42 +19,54 @@ def pipeline(request : dict):
     tf.populate_faiss(llm_parsed_usr_query=llm_parsed_query)
     
     combined_dict = llm_parsed_query
-    combined_dict.update(req['metadata'])
+    combined_dict.update(request['metadata'])
 
-    tf.copy_trendy_photos(k, combined_dict, query_threshhold=query_threshhold, product_threshhold=query_threshhold)
+    tf.copy_trendy_photos(k, combined_dict, query_threshhold=query_threshhold, product_threshhold=product_threshhold)
+
+    #to be returned to the user as a message
+    return reply 
 
 
-req = {
-    'metadata' : {
-        'k' : 5, 
-        'similarity' : 0.7, 
-        'location' : 'hyderabad', 
-        'age' : 100
-    }, 
-    'messages' : [
-        {
-            'role' : 'user', 
-            'content' : 'Men footwear. Black shoes. Puma'
-        }
-    ]
-}
+from flask import Flask, request, jsonify, send_file
+from flask_cors import CORS 
 
-from flask import Flask, request, jsonify
-
-app = Flask(__name__) 
+app = Flask(__name__)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 @app.route('/', methods = ['POST'])
 def process_input() : 
-    try: 
+    try:
+        #deleting old images
+        import os
+        old_images = os.listdir('./matches')
+        for image in old_images: 
+            os.remove(f'./matches/{image}')
+        
+        #getting request, making call to fill matches with new img 
         data = request.json
+        print(data)
         reply = pipeline(data) 
-        return {'message', reply}
+
+        #new images 
+        images = os.listdir('./matches')
+        
+        data_obj = {
+            'message' : reply, 
+            'image_urls' : images 
+        }
+        
+        return data_obj 
         
     except Exception as e: 
         return jsonify(
             {'status' : 'error', 
              'message' : str(e)}
         ), 400 
+
+@app.route('/images/<id>')
+def get_image(id : int):
+    return send_file('./matches/' + id, mimetype='image/jpeg')
+
 
 if __name__ == '__main__' : 
     app.run(debug = True)

@@ -10,54 +10,42 @@
             Your conversation with Flipbot will appear here
           </h1>
         </div>
-        <div
-          v-for="prompt in conversation_history"
-          :key="prompt"
-          class="conversation"
-        >
-          <div v-if="prompt.role === 'user'" class="checkbox-user">
-            <p>YOU</p>
-            <div class="user-chat">
-              {{ prompt.content }}
+            <div v-for="prompt in conversation_history" :key="prompt" class="conversation">
+              <div v-if="prompt.role === 'user'" class="checkbox-user">
+                <p>YOU</p>
+                <div class="user-chat">
+                  {{ prompt.content }}
+                </div>
+              </div>
+              <div v-else class="checkbox-gpt">
+                <p>FLIPBOT</p>
+                <div class="gpt-chat">{{ prompt.content }}</div>
+              </div>
             </div>
           </div>
-          <div v-else class="checkbox-gpt">
-            <p>FLIPBOT</p>
-            <div class="gpt-chat">{{ prompt.content }}</div>
+        </div>
+        <div class="product-box">
+          <div class="history">
+            <div v-if="products.length === 0" class="if-zero">
+              <h1 style="color: yellowgreen; text-align: center">
+                Welcome to Flipbot !!!
+              </h1>
+              <h1 style="color: yellowgreen; text-align: center">
+                There are no products to display, start chatting with the flipbot in
+                the textbox below to display products that you like !!!
+                <br /><br />Before you start, please enter all your details in the
+                left so that we can give you an accurate fashion outfit.
+                <br /><br />You can also give us an image so that we can find out
+                outfits that are similar to it. <br /><br />Happy Shopping !!!
+              </h1>
+            </div>
+            <div class="allProducts">
+              <ProductCard v-for="(product, index) in this.products" :key="index" :url="product" />
           </div>
         </div>
-      </div>
-    </div>
-    <div class="product-box">
-      <div class="history">
-        <div v-if="products.length === 0" class="if-zero">
-          <h1 style="color: yellowgreen; text-align: center">
-            Welcome to Flipbot !!!
-          </h1>
-          <h1 style="color: yellowgreen; text-align: center">
-            There are no products to display, start chatting with the flipbot in
-            the textbox below to display products that you like !!!
-            <br /><br />Before you start, please enter all your details in the
-            left so that we can give you an accurate fashion outfit.
-            <br /><br />You can also give us an image so that we can find out
-            outfits that are similar to it. <br /><br />Happy Shopping !!!
-          </h1>
-        </div>
-        <div class="allProducts">
-          <ProductCard
-            v-for="product in products"
-            :key="product"
-            :url="getImageUrl(product)"
-          />
-        </div>
-      </div>
-      <div class="text-box">
-        <div>
-          <textarea
-            placeholder="Start the conversation here!!!"
-            class="chatbox-input"
-            v-model="prompt"
-          />
+        <div class="text-box">
+          <div>
+            <textarea placeholder="Start the conversation here!!!" class="chatbox-input" v-model="prompt" />
         </div>
         <div><button type="submit" @click="sendPrompt">Submit</button></div>
       </div>
@@ -99,34 +87,48 @@ export default {
     },
 
     async sendPrompt() {
-      // TODO Send prompt data to backend
-      console.log(this.prompt);
-      console.log(
-        this.location,
-        this.productCount,
-        this.age,
-        this.gender,
-        this.similarity
-      );
-      try {
-        const response = await axios.get("URL_OF_BACKEND");
-        this.products = response.data;
-      } catch (error) {
-        console.error("Error fetching images:", error);
+
+      //update conv history 
+      this.conversation_history.push({ "role": "user", "content": this.prompt });
+
+      //object as per API docs
+      let data = {
+        'metadata': {
+          'age': this.age,
+          'gender': this.gender,
+          'similarity': parseFloat(this.similarity),
+          'location': this.location,
+          'k': parseInt(this.productCount)
+        },
+        'messages': this.conversation_history
       }
 
-      this.conversation_history.push({ role: "user", content: this.prompt });
-      this.conversation_history.push({
-        role: "gpt",
-        content: "hello" /* GPT PROMPT TO BE ADDED */,
-      });
-      this.$nextTick(() => {
-        this.scrollToEnd();
-      });
-    },
+      //making the actual axios post request
+      axios.post("http://127.0.0.1:5000/", data)
+        .then((response) => {
+          console.log(response)
+          //incase of resolution of promise
+          let assistant_message = response.data['message'];
 
-    getImageUrl(imageName) {
-      return `../../../../matches/${imageName}`; // Replace with your image directory path
+          //update personal history
+          this.conversation_history.push({  
+            'role': 'gpt',
+            'content': assistant_message
+          })
+
+          //set products to all image urls
+          let image_urls = response.data['image_urls']
+          console.log('Matched images : ', image_urls)
+          this.products = image_urls
+        })
+        .catch((error) => {
+          console.log(error)
+          this.conversation_history.push({
+            'role': 'gpt',
+            'content': `There has been an error : {${error}}`
+
+          })
+        })
     },
 
     scrollToEnd() {

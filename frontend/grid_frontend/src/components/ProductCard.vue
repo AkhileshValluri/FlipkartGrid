@@ -1,7 +1,7 @@
 <template>
     <div class="product">
         <div class="box-content">
-            <img src={{ url }} class="image"/>
+                <img :src="serverImgURL" class="image"/>
         </div>
         <div class="likebutton">
             <button @click="likeSubmit" :class="[isLiked ? 'liked' : 'notLiked']">{{like}}</button>
@@ -18,7 +18,8 @@
         data(){
             return{
                 isLiked:false,
-                like:'Like'
+                like:'Like', 
+                serverImgURL : 'http://127.0.0.1:5000/images/'+ this.url
             }
         },
         methods: {

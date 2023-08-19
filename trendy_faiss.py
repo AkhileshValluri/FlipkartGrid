@@ -28,6 +28,8 @@ class TrendyFaiss() :
         input_string = "" 
         print(response)
         for key in response.keys(): 
+            if key == "response" : 
+                continue
             weight = weights[key] if key in weights.keys() else 1
             for _ in range(weight): 
                     if isinstance(response[key], list): 
