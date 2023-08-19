@@ -1,19 +1,30 @@
 <template>
     <div class="product">
         <div class="box-content">
-            <img src="https://media.geeksforgeeks.org/wp-content/uploads/geeksforgeeks-13.png" class="image"/>
+            <img src={{ url }} class="image"/>
         </div>
         <div class="likebutton">
-            <button @click="likeSubmit">Like</button>
+            <button @click="likeSubmit" :class="[isLiked ? 'liked' : 'notLiked']">{{like}}</button>
         </div>
     </div>
 </template>
 
 <script>
     export default {
-        name : 'ProductCard', 
+        name : 'ProductCard',
+        props:{
+            url:String
+        }, 
+        data(){
+            return{
+                isLiked:false,
+                like:'Like'
+            }
+        },
         methods: {
             likeSubmit(){
+                this.isLiked = true;
+                this.like = 'Liked'
                 console.log('Submitted');
             }
         }
@@ -51,12 +62,25 @@
         height: 100%;
     }
 
-    .likebutton{
+    .notLiked{
         border: none;
         border-radius: 5px;
         text-align: center;
         margin-bottom: 5px;
         background-color: #007bff;
+        width: 30%;
+        margin-left:auto;
+        margin-right: auto;
+        margin-top: 2%;
+        cursor: pointer;
+    }
+
+    .liked{
+        border: none;
+        border-radius: 5px;
+        text-align: center;
+        margin-bottom: 5px;
+        background-color: yellowgreen;
         width: 30%;
         margin-left:auto;
         margin-right: auto;
