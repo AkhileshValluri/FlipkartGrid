@@ -309,4 +309,10 @@ export default {
   resize: horizontal;
   font-family: "Roboto", sans-serif;
 }
+
+ .productInput{
+  background-color: #ffdd00;
+  border-radius: 5px;
+ }
+
 </style>

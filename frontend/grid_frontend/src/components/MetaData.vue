@@ -6,7 +6,7 @@
       </div>
       <div class="chat-box" ref="scrollableDiv">
         <div v-if="conversation_history.length === 0">
-          <h1 style="color: yellowgreen; text-align: center; padding-top: 22%">
+          <h1 style="color: #ffdd00; text-align: center; padding-top: 22%">
             Your conversation with Flipbot will appear here
           </h1>
         </div>
@@ -27,16 +27,16 @@
         <div class="product-box">
           <div class="history">
             <div v-if="products.length === 0" class="if-zero">
-              <h1 style="color: yellowgreen; text-align: center">
-                Welcome to Flipbot !!!
+              <h1 style="color: #ffdd00; text-align: left"><u>
+                Welcome to FLIPBOT
+              </u>
+                <br/>
+                <br/>
               </h1>
-              <h1 style="color: yellowgreen; text-align: center">
-                There are no products to display, start chatting with the flipbot in
-                the textbox below to display products that you like !!!
-                <br /><br />Before you start, please enter all your details in the
-                left so that we can give you an accurate fashion outfit.
-                <br /><br />You can also give us an image so that we can find out
-                outfits that are similar to it. <br /><br />Happy Shopping !!!
+              <h1 style="color: #ffdd00; text-align: left">
+                Start a chat with Flipbot below to see products you'll love!
+                <br /><br />Please provide your details on the left before you begin, ensuring an accurate fashion outfit suggestion.
+                <br /><br />Feel free to upload an image, and we'll use it to identify similar outfits for you.<br /><br />Happy Shopping !!!
               </h1>
             </div>
             <div class="allProducts">
@@ -214,14 +214,16 @@ export default {
   padding: 2vh 2vh 2vh 2vh;
   border-radius: 10px;
   margin-right: 2.5vh;
-  background-color: yellowgreen;
+  background-color: #ffdd00;
+  color: black;
 }
 
 .gpt-chat {
   margin-left: auto;
   padding: 2vh 2vh 2vh 2vh;
   border-radius: 10px;
-  background-color: crimson;
+  background-color: #f7a200;
+  color: black;
 }
 
 .product-box {
@@ -275,8 +277,8 @@ export default {
 
 button {
   padding: 10px 20px;
-  background-color: #007bff;
-  color: #fff;
+  background-color: #ffdd00;
+  color: black;
   border: none;
   border-radius: 5px;
   font-size: 16px;

@@ -20,7 +20,7 @@ export default {
 
 <style>
 body{
-  background-color: #2b2a2b;
+  background-color: #047BD5;
 }
 
 #app {
