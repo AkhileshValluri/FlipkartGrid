@@ -16,9 +16,11 @@ class TrendyFaiss() :
         self.faissdb = ImageFaiss()
 
         self.weights = {
-            'gender' : 1, 
+            'gender' : 2, 
             'articleType' : 4, 
-            'baseColour' : 1
+            'baseColour' : 3,
+            'brand' : 1,
+            'season' : 1            
         }
 
     def _get_text_preprocessing(self, response : dict, weights : dict) :
@@ -30,7 +32,7 @@ class TrendyFaiss() :
         for key in response.keys(): 
             if key == "response" : 
                 continue
-            weight = weights[key] if key in weights.keys() else 1
+            weight = weights[key] if key in weights.keys() else 0
             for _ in range(weight): 
                     if isinstance(response[key], list): 
                         for val in response[key]:
@@ -45,9 +47,11 @@ class TrendyFaiss() :
     def get_text_embedding(self, \
         input_text : str, \
         weights : dict = {
-            'gender' : 0, 
-            'articleType' : 3, 
-            'baseColour' : 1
+            'gender' : 3, 
+            'articleType' : 4, 
+            'baseColour' : 2, 
+            'location' : 1,
+            'age' : 1
         }) : 
 
         

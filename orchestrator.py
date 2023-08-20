@@ -2,7 +2,12 @@ from trendy_faiss import TrendyFaiss
 from chatbot import Chatbot 
 import json
 
-def pipeline(request : dict): 
+def pipeline(request : dict) ->str: 
+    """
+    Puts entire query through a pipeline and populates matches with relevent images
+    request should have metadata and messages
+    """
+
     metadata = request['metadata']
     messages = request['messages']
 
@@ -16,7 +21,9 @@ def pipeline(request : dict):
     product_threshhold = 1 - metadata['similarity']
 
     tf = TrendyFaiss() 
-    tf.populate_faiss(llm_parsed_usr_query=llm_parsed_query)
+    tf_populate_dict = llm_parsed_query
+    tf_populate_dict.update(metadata)
+    tf.populate_faiss(llm_parsed_usr_query=tf_populate_dict)
     
     combined_dict = llm_parsed_query
     combined_dict.update(request['metadata'])
@@ -36,12 +43,7 @@ CORS(app, resources={r"/*": {"origins": "*"}})
 @app.route('/', methods = ['POST'])
 def process_input() : 
     try:
-        #deleting old images
-        import os
-        old_images = os.listdir('./matches')
-        for image in old_images: 
-            os.remove(f'./matches/{image}')
-        
+        import os        
         #getting request, making call to fill matches with new img 
         data = request.json
         print(data)
@@ -67,6 +69,15 @@ def process_input() :
 def get_image(id : int):
     return send_file('./matches/' + id, mimetype='image/jpeg')
 
+@app.route('/', methods = ['GET'])
+def new_user(): 
+    #deleting old images
+    import os
+    old_images = os.listdir('./matches')
+    for image in old_images: 
+        os.remove(f'./matches/{image}')
+    print('all files cleared')
+    return {'message' : 'All files cleared'}
 
 if __name__ == '__main__' : 
     app.run(debug = True)

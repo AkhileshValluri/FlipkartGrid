@@ -64,20 +64,22 @@ class Chatbot():
                         format = "{category_string_to_attr['articleType']}; multiple-matches"
                     />
                     <string name = "baseColour" 
-                        description = "Colour of clothing article"
+                        description = "Colour of clothing article mentioned in most recent prompt"
+                    />
+                    <string name = "brand" 
+                        description = "Brand of article user mentioned in the most recent prompt"
+                    />
+                    <string name = "season" 
+                        description = "Season of clothing article"
                     />
                 </output>
 
                 <prompt>
-                    You are a prompt classifier who should extract information from the metadata of the user or the query itself. 
-                    You can return multiple categories if you feel like they are similar enough.
-                    In the response be friendly and helpful. Make sure to mention to mention to the user what exactly you inferred from their query.
-                    If the user asks something unrelated to fashion then fill the response with the fallback message, don't respond with your own knowledge.  
-                    FALLBACK MESSAGE: 
-                    I am a fashion assistant. I am not able to help you regarding the above. Please ask something related. 
-                    METADATA : 
-                    {metadata}
-                    USER QUERY: 
+                    You are a classifier who should extract information from the query history of a user and respond to user. 
+                    Most recent prompt is given in the last.
+                    You can return multiple categories if you feel like they are similar enough or if user hasn't mentioned anything specific.
+                    In the response be friendly and helpful. Respond to tell what you understood from their query.
+                    USER QUERY HISTORY: 
                     {{{{user_query}}}}
                     @complete_json_suffix_v2
                 </prompt>

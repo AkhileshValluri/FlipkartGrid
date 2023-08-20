@@ -4,11 +4,16 @@
 
 <script>
 import MetaData from './components/MetaData.vue'
-
+import axios from 'axios';
 export default {
   name: 'App',
   components: {
     MetaData
+  },
+  mounted() {
+    axios.get('http://localhost:5000/')
+      .then(res => console.log(res))
+      .catch(err => console.log(err))
   }
 }
 </script>

@@ -36,14 +36,10 @@ class ImageFaiss():
     def get_text_embedding(self, \
         input_text: str, \
         weights : dict = {
-            'id' : 0,
             'gender' : 2, 
-            'masterCategory' : 1, 
-            'subCategory' : 2, 
             'articleType' : 4, 
             'baseColour' : 4, 
             'season' : 1, 
-            'year' : 0, 
             'brand' : 2
         }): 
 
@@ -116,3 +112,4 @@ def copy_images_to_matches(prod_desc):
 
         # Copy the file
         shutil.copy(source_path, destination_path)
+        
