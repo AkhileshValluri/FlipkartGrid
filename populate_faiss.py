@@ -22,7 +22,7 @@ class ImageFaiss():
         #each element corresponds to different category
         input_string = ""
         for key in response.keys(): 
-            weight = weights[key] if key in weights.keys() else 1
+            weight = weights[key] if key in weights.keys() else 0
             for _ in range(weight):
                 if isinstance(response[key], list): 
                     for val in response[key]: 
@@ -37,8 +37,8 @@ class ImageFaiss():
         input_text: str, \
         weights : dict = {
             'gender' : 2, 
-            'articleType' : 4, 
-            'baseColour' : 4, 
+            'articleType' : 5, 
+            'baseColour' : 3, 
             'season' : 1, 
             'brand' : 2
         }): 

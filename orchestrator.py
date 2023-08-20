@@ -12,10 +12,10 @@ def pipeline(request : dict) ->str:
     messages = request['messages']
 
     cb = Chatbot()
-    llm_parsed_query = cb.get_chatbot_reply(messages)
+    llm_parsed_query = cb.get_chatbot_reply(messages, metadata)
     reply = llm_parsed_query['response']
     print(llm_parsed_query)
-    
+        
     k = metadata['k']
     query_threshhold = metadata['similarity']
     product_threshhold = 1 - metadata['similarity']

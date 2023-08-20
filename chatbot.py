@@ -60,7 +60,7 @@ class Chatbot():
                         format = "{category_string_to_attr['gender']}; multiple-matches"
                     />
                     <string name = "articleType" 
-                        description = "Type of clothing article"
+                        description = "Clothing articles that were mentioned in the most recent prompt. If info isn't given, then search previous prompts"
                         format = "{category_string_to_attr['articleType']}; multiple-matches"
                     />
                     <string name = "baseColour" 
@@ -81,6 +81,8 @@ class Chatbot():
                     In the response be friendly and helpful. Respond to tell what you understood from their query.
                     USER QUERY HISTORY: 
                     {{{{user_query}}}}
+                    METADATA:
+                    {{{{metadata}}}}
                     @complete_json_suffix_v2
                 </prompt>
             </rail>
@@ -89,7 +91,7 @@ class Chatbot():
         guard = gd.Guard.from_rail_string(rail_string=rail_spec)
         return guard
     
-    def _make_openai_query(self, guard, messages): 
+    def _make_openai_query(self, guard, messages, metadata): 
         """Makes the acutal open AI call, returns the vector DB queryable string"""
         import dotenv
         dotenv.load_dotenv()
@@ -98,12 +100,12 @@ class Chatbot():
             openai.Completion.create, 
             engine = 'text-davinci-003', 
             max_tokens = 256, 
-            prompt_params = {'user_query' : messages}, 
+            prompt_params = {'user_query' : messages, 'metadata' : metadata}, 
             temperature = 0.1
         )
         return validated_output
     
-    def get_chatbot_reply(self, messages): 
-        guard = self.get_guardrail_instance(messages = messages)
-        return self._make_openai_query(guard, messages)
+    def get_chatbot_reply(self, messages, metadata): 
+        guard = self.get_guardrail_instance(messages = messages, metadata=metadata)
+        return self._make_openai_query(guard, messages, metadata)
 
